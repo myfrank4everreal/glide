@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Used by `flutter build ipa` in .github/workflows/release.yml. -->
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>teamID</key>
+	<string>REPLACE_WITH_APPLE_TEAM_ID</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.glideapp.glide</key>
+		<string>Glide App Store</string>
+	</dict>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>

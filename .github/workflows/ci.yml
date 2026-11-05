@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Analyze & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.1
+          cache: true
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test integration_test
+      - run: flutter analyze --fatal-infos
+      - run: flutter test --coverage
+      - name: Enforce 80% coverage
+        run: bash tool/check_coverage.sh 80
+
+  build-android:
+    name: Build Android
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.1
+          cache: true
+      # Release mode (debug-signed without key.properties) so R8 shrinking
+      # problems show up here, not on release day.
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: glide-test-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+
+  build-ios:
+    name: Build iOS (no signing)
+    needs: test
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.1
+          cache: true
+      - run: flutter build ios --debug --no-codesign

@@ -1,0 +1,143 @@
+# Builds signed releases and uploads them to the Play internal track and
+# TestFlight. Runs on tags like v0.2.0, or by hand from the Actions tab.
+# Every secret it needs is listed in docs/release.md. Until they are set,
+# the upload jobs fail at their first step with a clear message.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: 3.44.1
+
+jobs:
+  test:
+    name: Analyze & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze --fatal-infos
+      - run: flutter test --coverage
+      - run: bash tool/check_coverage.sh 80
+
+  android:
+    name: Android → Play internal track
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment: release
+    steps:
+      - name: Check secrets
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$KEYSTORE" ] || [ -z "$PLAY_JSON" ]; then
+            echo "::error::Android release secrets are not set. See docs/release.md."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Write signing config
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storeFile=upload-keystore.jks
+          storePassword=$STORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+      - name: Build app bundle
+        run: flutter build appbundle --release --build-number=${{ github.run_number }}
+      - uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.glideapp.glide
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+      - name: Remove signing files
+        if: always()
+        run: rm -f android/app/upload-keystore.jks android/key.properties
+
+  ios:
+    name: iOS → TestFlight
+    needs: test
+    runs-on: macos-latest
+    timeout-minutes: 60
+    environment: release
+    steps:
+      - name: Check secrets
+        env:
+          CERT: ${{ secrets.IOS_DISTRIBUTION_CERT_P12_BASE64 }}
+          PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          if [ -z "$CERT" ] || [ -z "$PROFILE" ] || [ -z "$API_KEY" ]; then
+            echo "::error::iOS release secrets are not set. See docs/release.md."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.IOS_DISTRIBUTION_CERT_P12_BASE64 }}
+          p12-password: ${{ secrets.IOS_DISTRIBUTION_CERT_PASSWORD }}
+      - name: Install provisioning profile
+        env:
+          PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          dir="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$dir"
+          echo "$PROFILE" | base64 --decode > "$dir/glide.mobileprovision"
+      - name: Set team ID
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: sed -i '' "s/REPLACE_WITH_APPLE_TEAM_ID/$TEAM_ID/" ios/ExportOptions.plist
+      - name: Build IPA
+        run: >
+          flutter build ipa --release
+          --build-number=${{ github.run_number }}
+          --export-options-plist=ios/ExportOptions.plist
+      - uses: apple-actions/upload-testflight-build@v1
+        with:
+          app-path: build/ios/ipa/glide.ipa
+          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}

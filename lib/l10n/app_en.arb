@@ -1,0 +1,295 @@
+{
+  "@@locale": "en",
+  "appTitle": "Glide",
+  "homeDetect": "Detect obstacles",
+  "homeDetectHint": "Starts the camera and warns you about obstacles ahead",
+  "homeReadText": "Read text",
+  "homeReadTextHint": "Point the camera at a sign or document to hear it",
+  "homeNavigate": "Navigate",
+  "homeNavigateHint": "Save places and get spoken directions back to them",
+  "homeSettings": "Settings",
+  "comingInMilestone": "{feature} arrives in milestone {milestone}.",
+  "@comingInMilestone": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "milestone": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyDisclaimer": "Glide assists you. It does not replace your cane, guide dog, or judgement.",
+  "settingsVoice": "Voice alerts",
+  "settingsSpeechRate": "Speech rate",
+  "settingsHaptics": "Vibration alerts",
+  "settingsHapticIntensity": "Vibration strength",
+  "settingsSensitivity": "Detection sensitivity",
+  "settingsSensitivityHint": "Higher sensitivity gives more alerts, including less certain ones",
+  "settingsHighContrast": "High contrast",
+  "settingsDeleteData": "Delete my data",
+  "settingsDeleteDataConfirm": "Delete all settings and data stored by Glide on this phone?",
+  "settingsDeleteDataDone": "Your data has been deleted",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "percentValue": "{value} percent",
+  "@percentValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "obstacleAlert": "{object} {direction}, {distance}",
+  "@obstacleAlert": {
+    "description": "Spoken alert, e.g. 'Pole ahead, close'",
+    "placeholders": {
+      "object": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "directionLeft": "on your left",
+  "directionAhead": "ahead",
+  "directionRight": "on your right",
+  "distanceClose": "very close",
+  "distanceNear": "near",
+  "distanceFar": "far",
+  "pathClear": "Path clear",
+  "cameraPermissionRationale": "Glide needs the camera to see obstacles and read text. Images never leave your phone.",
+  "allowCamera": "Allow camera",
+  "permissionDenied": "Camera access is off. Open settings to turn it on.",
+  "permissionDeniedRetry": "Camera access was not allowed. Glide cannot detect obstacles without it.",
+  "openSettings": "Open settings",
+  "tryAgain": "Try again",
+  "cameraStarting": "Starting camera",
+  "cameraOn": "Camera on. Hold your phone upright at chest height, facing forward.",
+  "cameraViewLabel": "Camera view. {summary}",
+  "@cameraViewLabel": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "detectedSummary": "Detected: {objects}.",
+  "@detectedSummary": {
+    "placeholders": {
+      "objects": {
+        "type": "String",
+        "example": "person ahead, bench on your left"
+      }
+    }
+  },
+  "detectedObject": "{object} {direction}",
+  "@detectedObject": {
+    "placeholders": {
+      "object": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "nothingDetected": "Nothing detected.",
+  "detectionStarting": "Starting obstacle detection.",
+  "modelUnavailable": "Obstacle detection is unavailable: the detection model is not installed.",
+  "processingTime": "{ms} ms per frame",
+  "@processingTime": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "cameraFailed": "The camera could not start. Close other apps using the camera and try again.",
+  "readTextInstructions": "Point the camera at a sign or page, then tap Read text, or double-tap anywhere on the picture.",
+  "readTextButton": "Read text",
+  "readTextButtonHint": "Takes one photo and reads any text in it aloud. The photo is deleted straight away.",
+  "readingText": "Reading text",
+  "noTextFound": "No text found. Try moving closer or holding the phone steadier.",
+  "readTextFailed": "Could not read text. Try again.",
+  "stopReading": "Stop reading",
+  "testVibration": "Test vibration",
+  "testVibrationHint": "Plays the far, near and very close alert patterns",
+  "locationPermissionRationale": "Glide needs your location to guide you to places you have saved. Your location is never sent anywhere.",
+  "allowLocation": "Allow location",
+  "locationPermissionDenied": "Location access is off. Open settings to turn it on.",
+  "locationPermissionDeniedRetry": "Location access was not allowed. Glide cannot guide you without it.",
+  "locationOff": "Your location could not be found. Check that location is turned on, then try again.",
+  "navigationIntro": "Directions are in a straight line, not along streets, and GPS can be 5 to 20 metres off. Hold the phone upright, facing the way you are walking.",
+  "savedPlacesHeading": "Saved places",
+  "noSavedPlaces": "No saved places yet. Stand somewhere you want to come back to, like your front door or a bus stop, and tap Save this spot.",
+  "saveThisSpot": "Save this spot",
+  "saveThisSpotHint": "Remembers where you are standing now, so Glide can guide you back later",
+  "savingSpot": "Finding your location",
+  "placeNameLabel": "Name of this place",
+  "save": "Save",
+  "placeSaved": "Saved {name}.",
+  "@placeSaved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "placeSaveFailed": "Could not find your location, so nothing was saved. Try again outside, away from tall buildings.",
+  "guideToPlace": "Guide me to {name}",
+  "@guideToPlace": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deletePlace": "Delete {name}",
+  "@deletePlace": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "findingPosition": "Finding your position",
+  "guidanceUpdate": "{place}, {distance}, {direction}",
+  "@guidanceUpdate": {
+    "description": "e.g. 'Front door, 120 metres, at 2 o'clock'",
+    "placeholders": {
+      "place": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "guidanceNoHeading": "{place}, {distance}",
+  "@guidanceNoHeading": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "guidanceArrived": "You are near {place}. GPS is not exact, so use your cane or guide dog for the last few steps.",
+  "@guidanceArrived": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "guidanceWeakSignal": "GPS signal is weak. Directions may be up to {distance} off.",
+  "@guidanceWeakSignal": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "straightAhead": "straight ahead",
+  "atClockHour": "at {hour} o'clock",
+  "@atClockHour": {
+    "placeholders": {
+      "hour": {
+        "type": "int"
+      }
+    }
+  },
+  "distanceMetres": "{count, plural, =1{1 metre} other{{count} metres}}",
+  "@distanceMetres": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "distanceKilometres": "{km} kilometres",
+  "@distanceKilometres": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "repeatDirections": "Repeat directions",
+  "stopGuiding": "Stop guiding",
+  "done": "Done",
+  "crossingCue": "Traffic light ahead, possibly a street crossing. Listen for traffic before you cross.",
+  "languageName": "English",
+  "@languageName": {
+    "description": "This language's name, written in this language"
+  },
+  "ttsLanguageTag": "en-US",
+  "@ttsLanguageTag": {
+    "description": "BCP-47 tag of the speech voice for this language. Not shown."
+  },
+  "settingsLanguage": "Language",
+  "settingsReplayTutorial": "Replay the tutorial",
+  "detectionInterrupted": "Obstacle detection is not working right now. Stop, and rely on your cane or guide dog until it resumes.",
+  "detectionResumed": "Obstacle detection resumed.",
+  "onboardingProgress": "Step {current} of {total}",
+  "@onboardingProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingWelcomeTitle": "Welcome to Glide",
+  "onboardingWelcomeBody": "Glide uses your phone's camera to warn you about obstacles ahead, reads signs and text aloud, and guides you back to places you save. Everything happens on your phone, and it works without an internet connection.",
+  "onboardingSafetyTitle": "Glide is an extra aid",
+  "onboardingSafetyBody": "Glide can miss things. It does not see every obstacle, it cannot see holes or drop-offs reliably, and it can never tell you that it is safe to cross a road. Keep using your cane, guide dog and judgement. Glide is there to add information, not to replace them.",
+  "onboardingHoldTitle": "Hold the phone upright",
+  "onboardingHoldBody": "Hold the phone at chest height, screen towards you and the back camera facing the way you walk, or use a chest harness. The screen stays on while Glide is watching or guiding, which uses more battery.",
+  "onboardingFeelTitle": "Learn the vibrations",
+  "onboardingFeelBody": "One pulse means an obstacle further away. Two pulses mean it is within 3 metres. A fast burst means it is very close. Three long pulses mean there may be a street crossing ahead. Try them now.",
+  "onboardingCrossingPattern": "possible street crossing",
+  "onboardingPrivacyTitle": "Your privacy",
+  "onboardingPrivacyBody": "Camera images never leave your phone and are not saved. Your location is used only while you navigate, and the only places stored are the ones you save. You can delete everything in Settings, under Delete my data.",
+  "onboardingNext": "Next",
+  "onboardingBack": "Back",
+  "onboardingUnderstand": "I understand",
+  "onboardingStart": "Start using Glide",
+  "errorScreenMessage": "Something went wrong on this screen.",
+  "goHome": "Go to the home screen",
+  "errorWidgetMessage": "This part of the screen could not be shown.",
+  "objPerson": "person",
+  "objBicycle": "bicycle",
+  "objCar": "car",
+  "objMotorcycle": "motorbike",
+  "objBus": "bus",
+  "objTruck": "truck",
+  "objTrafficLight": "traffic light",
+  "objFireHydrant": "fire hydrant",
+  "objStopSign": "stop sign",
+  "objParkingMeter": "parking meter",
+  "objBench": "bench",
+  "objDog": "dog",
+  "objHorse": "horse",
+  "objCow": "cow",
+  "objChair": "chair",
+  "objCouch": "sofa",
+  "objPottedPlant": "plant pot",
+  "objTable": "table",
+  "objSuitcase": "suitcase",
+  "@objPerson": {
+    "description": "Detected object names, spoken in alerts. One per detector class."
+  }
+}

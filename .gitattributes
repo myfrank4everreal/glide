@@ -1,0 +1,4 @@
+# Dart format and the CI shell scripts use LF; keep it on Windows too.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.tflite filter=lfs diff=lfs merge=lfs -text
