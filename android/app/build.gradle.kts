@@ -18,7 +18,9 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.glideapp.glide"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler_android needs 37; compiling against a newer SDK is
+    // backward compatible and does not change targetSdk or minSdk.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
