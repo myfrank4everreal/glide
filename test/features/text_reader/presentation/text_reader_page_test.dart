@@ -4,32 +4,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:glide/features/camera/presentation/cubit/camera_cubit.dart';
 import 'package:glide/features/text_reader/presentation/cubit/text_reader_cubit.dart';
 import 'package:glide/features/text_reader/presentation/pages/text_reader_page.dart';
-import 'package:glide/services/ai/text_recognition_service.dart';
+import 'package:glide/services/camera/camera_service.dart';
 import 'package:glide/services/permissions/permission_service.dart';
 
 import '../../../helpers/fakes.dart';
-
-class _FakeOcr implements TextRecognitionService {
-  List<String> lines = const [];
-
-  @override
-  Future<List<String>> recognizeLines(String imagePath) async => lines;
-
-  @override
-  Future<void> close() async {}
-}
 
 void main() {
   late FakeCameraService camera;
   late FakeTtsService tts;
   late FakeHapticService haptics;
-  late _FakeOcr ocr;
+  late FakeOcr ocr;
 
   setUp(() {
     camera = FakeCameraService();
     tts = FakeTtsService();
     haptics = FakeHapticService();
-    ocr = _FakeOcr();
+    ocr = FakeOcr();
   });
 
   Future<void> pumpPage(WidgetTester tester) async {
@@ -47,6 +37,7 @@ void main() {
       tts: tts,
       haptics: haptics,
       deleteFile: (_) async {},
+      focusSettle: Duration.zero,
     );
     addTearDown(cameraCubit.close);
     addTearDown(reader.close);
@@ -63,7 +54,7 @@ void main() {
         settingsCubit: settingsCubit,
       ),
     );
-    await cameraCubit.start();
+    await cameraCubit.start(use: CameraUse.text);
     await tester.pumpAndSettle();
   }
 

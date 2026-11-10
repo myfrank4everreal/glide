@@ -2,7 +2,13 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 
-enum FrameFormat { yuv420, bgra8888 }
+enum FrameFormat {
+  yuv420,
+  bgra8888,
+
+  /// Android's single-plane YUV, which ML Kit text recognition reads directly.
+  nv21,
+}
 
 class FramePlane {
   const FramePlane({
@@ -37,6 +43,7 @@ class CameraFrame {
       ImageFormatGroup.yuv420 when image.planes.length == 3 =>
         FrameFormat.yuv420,
       ImageFormatGroup.bgra8888 => FrameFormat.bgra8888,
+      ImageFormatGroup.nv21 => FrameFormat.nv21,
       _ => null,
     };
     if (format == null) return null;
@@ -67,6 +74,29 @@ class CameraFrame {
   final int rotation;
 
   final List<FramePlane> planes;
+
+  /// Average brightness, 0 (black) to 255, from a sparse sample of pixels.
+  /// Cheap enough to call on every frame.
+  double meanLuma({int samples = 400}) {
+    final plane = planes.first.bytes;
+    if (plane.isEmpty) return 0;
+    final step = format == FrameFormat.bgra8888 ? 4 : 1;
+    final pixels = format == FrameFormat.bgra8888
+        ? plane.length ~/ 4
+        : width * height; // Y comes first in yuv420 and nv21.
+    final stride = (pixels / samples).ceil().clamp(1, pixels);
+    var sum = 0;
+    var count = 0;
+    for (var i = 0; i < pixels && i * step + 2 < plane.length; i += stride) {
+      final o = i * step;
+      // BGRA: approximate luma as (R + 2G + B) / 4.
+      sum += step == 4
+          ? (plane[o + 2] + 2 * plane[o + 1] + plane[o]) >> 2
+          : plane[o];
+      count++;
+    }
+    return count == 0 ? 0 : sum / count;
+  }
 
   /// Size as the user sees it, after rotation.
   ({int width, int height}) get displaySize => rotation % 180 == 0

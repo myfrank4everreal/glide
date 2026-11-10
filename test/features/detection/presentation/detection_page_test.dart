@@ -281,7 +281,7 @@ void main() {
       permissions.current = AppPermissionStatus.granted;
       await pumpPage(tester);
 
-      expect(find.textContaining('model is not installed'), findsOneWidget);
+      expect(find.textContaining('could not be loaded'), findsOneWidget);
       expect(find.byType(CameraPreview), findsOneWidget);
     });
 

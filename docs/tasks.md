@@ -151,6 +151,24 @@ routing provider, which is a product decision (cost, licence, privacy policy).
 * [ ] Before release: everything marked "on a real phone" above, model licence,
   translation review, publisher details in the privacy policy
 
+## After first phone test (2026-11-10)
+
+Findings from the first Android test and what changed:
+
+* [x] "Model not installed": CI checked out without Git LFS, so the APK held a
+  130-byte pointer. CI now fetches LFS files, and the loader names this case
+* [x] Read text: separate camera setup (1080p, NV21 on Android), focus and
+  exposure on the centre before each photo, light button, light turned on
+  automatically in the dark
+* [x] Live text guidance (`TextAimingGuide`): "move left / right / up / down",
+  "move closer", "move further away", "hold still"; reads the text by itself
+  once it is complete and steady for two looks (~1.5 s)
+* [ ] **On a real phone:** do the hint directions match reality on Android and
+  iPhone? (Box coordinates are assumed upright on Android and rotated by hand
+  on iOS.) Is 700 ms between looks fast enough without overheating?
+* [ ] Next: voice commands with push-to-talk, hand-off to the screen reader,
+  "Hey Google" / Siri shortcuts
+
 ## Phase 2+ (not started)
 
 * [ ] Indoor navigation (floor plans)

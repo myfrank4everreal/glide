@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glide/core/error/exceptions.dart';
 import 'package:glide/core/geo/geo_point.dart';
+import 'package:glide/core/vision/recognized_line.dart';
 import 'package:glide/features/detection/domain/entities/detection_result.dart';
 import 'package:glide/features/detection/domain/repositories/detection_repository.dart';
 import 'package:glide/features/navigation/domain/entities/saved_place.dart';
@@ -14,6 +15,7 @@ import 'package:glide/features/settings/domain/repositories/settings_repository.
 import 'package:glide/features/settings/domain/usecases/settings_usecases.dart';
 import 'package:glide/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:glide/l10n/app_localizations.dart';
+import 'package:glide/services/ai/text_recognition_service.dart';
 import 'package:glide/services/camera/camera_frame.dart';
 import 'package:glide/services/camera/camera_service.dart';
 import 'package:glide/services/haptic/haptic_pattern.dart';
@@ -147,11 +149,26 @@ class FakeCameraService implements CameraService {
   @override
   CameraController? get controller => _initialized ? _mock : null;
 
+  CameraUse? lastUse;
+  int focusCalls = 0;
+  bool hasTorch = true;
+  bool torchOn = false;
+
   @override
-  Future<void> initialize() async {
+  Future<void> initialize({CameraUse use = CameraUse.detection}) async {
     initializeCalls++;
+    lastUse = use;
     if (initializeError case final error?) throw error;
     _initialized = true;
+  }
+
+  @override
+  Future<void> focusOnCenter() async => focusCalls++;
+
+  @override
+  Future<bool> setTorch({required bool on}) async {
+    if (hasTorch) torchOn = on;
+    return hasTorch;
   }
 
   void Function(CameraFrame frame)? frameListener;
@@ -280,6 +297,36 @@ class FakeScreenAwakeService implements ScreenAwakeService {
 
   @override
   Future<void> allowOff() async => on = false;
+}
+
+class FakeOcr implements TextRecognitionService {
+  /// Result for photos.
+  List<String> lines = const [];
+
+  /// Result for each live frame, in turn; the last one repeats.
+  List<List<RecognizedLine>> frameResults = const [[]];
+  Object? error;
+  Completer<List<String>>? pending;
+  final List<String> paths = [];
+  int framesSeen = 0;
+
+  @override
+  Future<List<String>> recognizeLines(String imagePath) async {
+    paths.add(imagePath);
+    if (error case final e?) throw e;
+    return pending?.future ?? lines;
+  }
+
+  @override
+  Future<List<RecognizedLine>> recognizeFrame(CameraFrame frame) async {
+    final i = framesSeen.clamp(0, frameResults.length - 1);
+    framesSeen++;
+    if (error case final e?) throw e;
+    return frameResults[i];
+  }
+
+  @override
+  Future<void> close() async {}
 }
 
 SettingsCubit buildSettingsCubit(SettingsRepository repository) =>

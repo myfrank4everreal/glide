@@ -71,6 +71,7 @@ class TfliteObjectDetector implements ObjectDetector {
   Future<void> load() async {
     if (isLoaded) return;
     try {
+      await _checkNotLfsPointer(modelAsset);
       final interpreter = await Interpreter.fromAsset(
         modelAsset,
         options: InterpreterOptions()..threads = 2,
@@ -113,6 +114,18 @@ class TfliteObjectDetector implements ObjectDetector {
     } on Object catch (e) {
       await close();
       throw ModelLoadException('Could not load $modelAsset: $e');
+    }
+  }
+
+  /// A build made without Git LFS bundles a ~130-byte text pointer instead
+  /// of the model. Say so plainly rather than as an interpreter error.
+  static Future<void> _checkNotLfsPointer(String asset) async {
+    final data = await rootBundle.load(asset);
+    if (data.lengthInBytes < 1024) {
+      throw FormatException(
+        '$asset is only ${data.lengthInBytes} bytes: probably a Git LFS '
+        'pointer. Build from a checkout with `git lfs pull`.',
+      );
     }
   }
 

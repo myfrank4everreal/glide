@@ -25,16 +25,24 @@ void main() {
   late _MockController controller;
   late CameraValue value;
   CameraDescription? createdFor;
+  CameraUse? createdUse;
   void Function(CameraImage)? imageCallback;
 
   PluginCameraService serviceWith(List<CameraDescription> cameras) =>
       PluginCameraService(
         loadCameras: () async => cameras,
-        createController: (camera) {
+        createController: (camera, use) {
           createdFor = camera;
+          createdUse = use;
           return controller;
         },
       );
+
+  setUpAll(() {
+    registerFallbackValue(FocusMode.auto);
+    registerFallbackValue(ExposureMode.auto);
+    registerFallbackValue(Offset.zero);
+  });
 
   setUp(() {
     createdFor = null;
@@ -175,5 +183,50 @@ void main() {
     verify(() => controller.dispose()).called(1);
     expect(service.controller, isNull);
     expect(service.isInitialized, isFalse);
+  });
+
+  group('text mode', () {
+    test('switching use reopens the camera', () async {
+      final service = serviceWith([_back]);
+      await service.initialize();
+      expect(createdUse, CameraUse.detection);
+
+      await service.initialize(use: CameraUse.text);
+
+      expect(createdUse, CameraUse.text);
+      verify(() => controller.dispose()).called(1);
+      verify(() => controller.initialize()).called(2);
+    });
+
+    test('focus tries every control, skipping unsupported ones', () async {
+      when(
+        () => controller.setFocusMode(any()),
+      ).thenThrow(CameraException('setFocusModeFailed', 'not supported'));
+      when(() => controller.setExposureMode(any())).thenAnswer((_) async {});
+      when(() => controller.setFocusPoint(any())).thenAnswer((_) async {});
+      when(() => controller.setExposurePoint(any())).thenAnswer((_) async {});
+      final service = serviceWith([_back]);
+      await service.initialize(use: CameraUse.text);
+
+      await service.focusOnCenter();
+
+      verify(
+        () => controller.setExposurePoint(const Offset(0.5, 0.5)),
+      ).called(1);
+    });
+
+    test('torch reports whether the camera has a light', () async {
+      when(
+        () => controller.setFlashMode(FlashMode.torch),
+      ).thenAnswer((_) async {});
+      when(
+        () => controller.setFlashMode(FlashMode.off),
+      ).thenThrow(CameraException('setFlashModeFailed', 'no flash'));
+      final service = serviceWith([_back]);
+      await service.initialize();
+
+      expect(await service.setTorch(on: true), isTrue);
+      expect(await service.setTorch(on: false), isFalse);
+    });
   });
 }

@@ -100,7 +100,7 @@
   },
   "nothingDetected": "Nothing detected.",
   "detectionStarting": "Starting obstacle detection.",
-  "modelUnavailable": "Obstacle detection is unavailable: the detection model is not installed.",
+  "modelUnavailable": "Obstacle detection is unavailable: the detection model could not be loaded. Reinstall Glide, and if that does not help, report it.",
   "processingTime": "{ms} ms per frame",
   "@processingTime": {
     "placeholders": {
@@ -110,7 +110,7 @@
     }
   },
   "cameraFailed": "The camera could not start. Close other apps using the camera and try again.",
-  "readTextInstructions": "Point the camera at a sign or page, then tap Read text, or double-tap anywhere on the picture.",
+  "readTextInstructions": "Point the camera at a sign or page. Glide tells you how to move the phone and reads the text once it is steady. You can also tap Read text to take a photo.",
   "readTextButton": "Read text",
   "readTextButtonHint": "Takes one photo and reads any text in it aloud. The photo is deleted straight away.",
   "readingText": "Reading text",
@@ -291,5 +291,16 @@
   "objSuitcase": "suitcase",
   "@objPerson": {
     "description": "Detected object names, spoken in alerts. One per detector class."
-  }
+  },
+  "aimMoveLeft": "Move the phone a little to the left",
+  "aimMoveRight": "Move the phone a little to the right",
+  "aimMoveUp": "Tilt the phone up a little",
+  "aimMoveDown": "Tilt the phone down a little",
+  "aimMoveCloser": "Move closer to the text",
+  "aimMoveBack": "Move the phone further away",
+  "aimHoldStill": "Text found. Hold still.",
+  "readSomethingElse": "Read something else",
+  "lightOn": "Turn light on",
+  "lightOff": "Turn light off",
+  "lightTurnedOn": "It is dark, so the light is on."
 }

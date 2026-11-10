@@ -25,7 +25,12 @@ class CameraCubit extends Cubit<CameraState> {
   final TtsService _tts;
   final Duration _hapticTestGap;
 
-  Future<void> start() async {
+  CameraUse _use = CameraUse.detection;
+
+  /// [use] picks the camera setup: fast frames for detection, detail for
+  /// reading text. It is kept for permission retries and resumes.
+  Future<void> start({CameraUse use = CameraUse.detection}) async {
+    _use = use;
     switch (await _permissions.status(AppPermission.camera)) {
       case AppPermissionStatus.granted:
         await _startCamera();
@@ -95,7 +100,7 @@ class CameraCubit extends Cubit<CameraState> {
   Future<void> _startCamera() async {
     emit(const CameraStarting());
     try {
-      await _camera.initialize();
+      await _camera.initialize(use: _use);
     } on CameraUnavailableException catch (e) {
       await _haptics.play(HapticPattern.error);
       emit(CameraFailed(e.message));

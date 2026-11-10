@@ -14,6 +14,7 @@ import 'package:glide/features/onboarding/presentation/widgets/onboarding_gate.d
 import 'package:glide/features/settings/presentation/pages/settings_page.dart';
 import 'package:glide/features/text_reader/presentation/cubit/text_reader_cubit.dart';
 import 'package:glide/features/text_reader/presentation/pages/text_reader_page.dart';
+import 'package:glide/services/camera/camera_service.dart';
 import 'package:go_router/go_router.dart';
 
 abstract final class AppRoutes {
@@ -52,7 +53,9 @@ GoRouter createRouter() => GoRouter(
           path: AppRoutes.textReader.substring(1),
           builder: (_, _) => MultiBlocProvider(
             providers: [
-              BlocProvider(create: (_) => getIt<CameraCubit>()..start()),
+              BlocProvider(
+                create: (_) => getIt<CameraCubit>()..start(use: CameraUse.text),
+              ),
               BlocProvider(create: (_) => getIt<TextReaderCubit>()),
             ],
             child: const TextReaderPage(),

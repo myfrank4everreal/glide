@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glide/core/error/exceptions.dart';
 import 'package:glide/features/camera/presentation/cubit/camera_cubit.dart';
+import 'package:glide/services/camera/camera_service.dart';
 import 'package:glide/services/haptic/haptic_pattern.dart';
 import 'package:glide/services/permissions/permission_service.dart';
 
@@ -232,6 +233,14 @@ void main() {
     final cubit = build();
     await cubit.announce('Camera on');
     expect(tts.spoken, ['Camera on']);
+    await cubit.close();
+  });
+
+  test('start passes the camera use on to the camera', () async {
+    permissions.current = AppPermissionStatus.granted;
+    final cubit = build();
+    await cubit.start(use: CameraUse.text);
+    expect(camera.lastUse, CameraUse.text);
     await cubit.close();
   });
 }

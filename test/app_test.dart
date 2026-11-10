@@ -11,7 +11,6 @@ import 'package:glide/features/onboarding/presentation/cubit/onboarding_cubit.da
 import 'package:glide/features/settings/domain/entities/user_settings.dart';
 import 'package:glide/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:glide/features/text_reader/presentation/cubit/text_reader_cubit.dart';
-import 'package:glide/services/ai/text_recognition_service.dart';
 import 'package:glide/services/haptic/haptic_service.dart';
 import 'package:glide/services/tts/tts_service.dart';
 
@@ -46,7 +45,7 @@ void main() {
       ..registerFactory(
         () => TextReaderCubit(
           camera: camera,
-          ocr: _NoTextOcr(),
+          ocr: FakeOcr(),
           tts: tts,
           haptics: haptics,
         ),
@@ -203,12 +202,4 @@ void main() {
     expect(find.text('Detect obstacles'), findsOneWidget);
     expect(tts.language, 'en-US');
   });
-}
-
-class _NoTextOcr implements TextRecognitionService {
-  @override
-  Future<List<String>> recognizeLines(String imagePath) async => const [];
-
-  @override
-  Future<void> close() async {}
 }

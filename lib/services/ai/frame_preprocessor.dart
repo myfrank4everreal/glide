@@ -62,6 +62,17 @@ Uint8List frameToRgb(
           out[o] = (luma + ((1436 * cr) >> 10)).clamp(0, 255);
           out[o + 1] = (luma - ((352 * cb + 731 * cr) >> 10)).clamp(0, 255);
           out[o + 2] = (luma + ((1815 * cb) >> 10)).clamp(0, 255);
+        case FrameFormat.nv21:
+          // One plane: full-size Y, then interleaved V,U at half size.
+          final plane = frame.planes[0];
+          final stride = plane.bytesPerRow;
+          final luma = plane.bytes[py * stride + px];
+          final c = stride * frame.height + (py >> 1) * stride + (px >> 1) * 2;
+          final cr = plane.bytes[c] - 128;
+          final cb = plane.bytes[c + 1] - 128;
+          out[o] = (luma + ((1436 * cr) >> 10)).clamp(0, 255);
+          out[o + 1] = (luma - ((352 * cb + 731 * cr) >> 10)).clamp(0, 255);
+          out[o + 2] = (luma + ((1815 * cb) >> 10)).clamp(0, 255);
       }
       o += 3;
     }
